@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Multivariate Random Forest Model</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<style type="text/css">
+*{margin:0;padding:0;box-sizing:border-box}body,html{height:100%;font-family:monospace,sans-serif}a{font-family:monospace;font-size:16px;line-height:1.7;color:#666;margin:0;transition:all .4s;-webkit-transition:all .4s;-o-transition:all .4s;-moz-transition:all .4s}a:focus{outline:0}a:hover{text-decoration:none}h2,h3,{color: #36C;font-weight: bolder; letter-spacing: 4em;margin-bottom: 1em; text-transform: lowercase;}input{outline:0;border:none}input:focus::-webkit-input-placeholder{color:transparent}input:focus:-moz-placeholder{color:transparent}input:focus::-moz-placeholder{color:transparent}input:focus:-ms-input-placeholder{color:transparent}input::-webkit-input-placeholder{color:#adadad}input:-moz-placeholder{color:#adadad}input::-moz-placeholder{color:#adadad}input:-ms-input-placeholder{color:#adadad}button{outline:0;border:none;background:0 0}button:hover{cursor:pointer}.container{max-width:1200px}.container-contact100{width:100%;min-height:100vh;display:-webkit-box;display:-webkit-flex;display:-moz-box;display:-ms-flexbox;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;padding:15px;background:#00FFFF;background:-webkit-linear-gradient(45deg,#0000FF,##C8C8C8);background:-o-linear-gradient(45deg,#0000FF,##C8C8C8);background:-moz-linear-gradient(45deg,#0000FF,##C8C8C8);background:linear-gradient(45deg,#0000FF,##C8C8C8)}.wrap-contact100{width:500px;background:#fff;border-radius:10px;overflow:hidden;padding:42px 55px 45px 55px}.contact100-form{width:100%}.contact100-form-title{display:block;font-family:monospace;font-size:39px;color:#333;line-height:1.2;text-align:center;padding-bottom:10px}.wrap-input100{width:100%;position:relative;border-bottom:2px solid #d9d9d9;padding-bottom:10px;margin-bottom:15px}.input100{display:block;width:100%;background:0 0;font-family:monospace;font-size:18px;color:#333;line-height:1.2;padding:0 5px}.focus-input100{position:absolute;display:block;width:100%;height:100%;top:0;left:0;pointer-events:none}.focus-input100::before{content:"";display:block;position:absolute;bottom:-2px;left:0;width:0;height:2px;-webkit-transition:all .4s;-o-transition:all .4s;-moz-transition:all .4s;transition:all .4s;background:#7f7f7f}input.input100{height:40px}.input100:focus+.focus-input100::before{width:100%}.has-val.input100+.focus-input100::before{width:100%}.container-contact100-form-btn{display:-webkit-box;display:-webkit-flex;display:-moz-box;display:-ms-flexbox;display:flex;flex-wrap:wrap;justify-content:center;padding-top:13px;font-weight:bold;}.wrap-contact100-form-btn{width:100%;display:block;position:relative;z-index:1;border-radius:25px;overflow:hidden;margin:0 auto}.contact100-form-bgbtn{position:absolute;z-index:-1;width:300%;height:100%;background:#00FFFF;background:-webkit-linear-gradient(left,#0000FF,##C8C8C8,#0000FF,##C8C8C8);background:-o-linear-gradient(left,#0000FF,##C8C8C8,#0000FF,##C8C8C8);background:-moz-linear-gradient(left,#0000FF,##C8C8C8,#0000FF,##C8C8C8);background:linear-gradient(left,#0000FF,##C8C8C8,#0000FF,##C8C8C8);top:0;left:-100%;-webkit-transition:all .4s;-o-transition:all .4s;-moz-transition:all .4s;transition:all .4s}.contact100-form-btn{font-weight: bold;display:-webkit-box;display:-webkit-flex;display:-moz-box;display:-ms-flexbox;display:flex;justify-content:center;align-items:center;padding:0 20px;width:100%;height:50px;font-family:monospace;font-size:16px;color:#00FFFF;line-height:1.2}.wrap-contact100-form-btn:hover .contact100-form-bgbtn{left:0}.contact100-form-btn i{-webkit-transition:all .4s;-o-transition:all .4s;-moz-transition:all .4s;transition:all .4s}.contact100-form-btn:hover i{-webkit-transform:translateX(10px);-moz-transform:translateX(10px);-ms-transform:translateX(10px);-o-transform:translateX(10px);transform:translateX(10px)}@media (max-width:576px){.wrap-contact100{padding:72px 15px 65px 15px}}.wrap-contact100{width:800px;background:#fff;border-radius:10px;overflow:hidden;padding:42px 55px 45px 55px}.contact100-form-title{font-size:26px font-weight:bold;}
+</style>
+	<div class="container-contact100">
+		<div class="wrap-contact100">
+			<form class="contact100-form validate-form" method = "POST" action="{{url_for('prediction')}}">
+
+				<span class="contact100-form-title" style="font-size:32px"> <p style = "font-family:georgia,garamond,serif;font-size:10px;font-style:italic;">
+        United States of Africa
+      </p></span>
+				<br>
+				<span class="contact100-form-title" style="font-size:32px"> BMHM Diagnosis Tool Demo</span>
+				<br>
+				<span class="contact100-form-title" id="output" style="font-size: 22px; color:#0000FF;" > &nbsp;  {{pred}}  </span>
+				
+				<div class="wrap-input100" style="border-bottom: 0px;">
+					<span class="label-input100">Have you ever experienced a traumatic event?</span>
+					<select  class="input100" name="q" style="padding: 10px 5px;margin-top: 15px;border: 2px solid #d9d9d9;">
+						<option > </option>
+						<option >Yes</option>
+						<option >No</option>
+						<option >Maybe</option>
+					</select>
+					<span class="focus-input100"></span>
+				</div>
+                <div class="wrap-input100" style="border-bottom: 0px;">
+					<span class="label-input100">Country</span>
+					<select  class="input100" name="w" style="padding: 10px 5px;margin-top: 15px;border: 2px solid #d9d9d9;">
+						<option > </option>
+							<option >Albania</option>
+							<option >Austria</option>
+							<option >Barbados</option>
+							<option >Belgium</option>
+							<option >Burundi</option>
+							<option >Brazil</option>
+							<option >China</option>
+							<option >Congo</option>
+							<option >DR Congo</option>
+							<option >Eritrea</option>
+							<option >Ethiopia</option>
+							<option >Kenya</option>
+							<option >Nigeria</option>
+							<option >South Africa</option>
+							<option >United States</option>
+					</select>
+					<span class="focus-input100"></span>
+				</div>
+				<div class="wrap-input100" style="border-bottom: 0px;">
+					<span class="label-input100">Is there an event in your life you frequently re-live, re-experience or analyze?</span>
+					<select  class="input100" name="e" style="padding: 10px 5px;margin-top: 15px;border: 2px solid #d9d9d9;">
+						<option > </option>
+						<option >Yes</option>
+							<option >No</option>
+					</select>
+					<span class="focus-input100"></span>
+				</div>
+				<div class="wrap-input100" style="border-bottom: 0px;">
+					<span class="label-input100">Is there an event in your life that has resulted in you avoiding particular people, places, or situations? </span>
+					<select  class="input100" name="t" style="padding: 10px 5px;margin-top: 15px;border: 2px solid #d9d9d9;">
+						<option > </option>
+						<option >Yes</option>
+							<option >No</option>
+					</select>
+					<span class="focus-input100"></span>
+				</div>
+				<div class="wrap-input100" style="border-bottom: 0px;">
+					<span class="label-input100">Is there a major event in your life that you blame yourself for?  </span>
+					<select  class="input100" name="y" style="padding: 10px 5px;margin-top: 15px;border: 2px solid #d9d9d9;">
+						<option > </option>
+						<option >Yes</option>
+							<option >No</option>
+							<option >Maybe</option>
+
+					</select>
+					<span class="focus-input100"></span>
+				</div>
+				<div class="wrap-input100" style="border-bottom: 0px;">
+					<span class="label-input100">Do you find it difficult to remember certain features of a particular major event in your life?</span>
+					<select  class="input100" name="u" style="padding: 10px 5px;margin-top: 15px;border: 2px solid #d9d9d9;">
+						<option > </option>
+						<option >Yes</option>
+							<option >No</option>
+					</select>
+					<span class="focus-input100"></span>
+				</div>
+				<div class="wrap-input100" style="border-bottom: 0px;">
+					<span class="label-input100">Is there a major event in your life that makes you feel irritable, aggressive, hyper-aware, jumpy or even easily startled?</span>
+					<select  class="input100" name="i" style="padding: 10px 5px;margin-top: 15px;border: 2px solid #d9d9d9;">
+						<option > </option>
+						<option >Yes</option>
+							<option >No</option>
+					</select>
+					<span class="focus-input100"></span>
+				</div>
+				<div class="wrap-input100" style="border-bottom: 0px;">
+					<span class="label-input100">Is there an event that has made you withdraw from family, loved ones or even friendships? </span>
+					<select  class="input100" name="o" style="padding: 10px 5px;margin-top: 15px;border: 2px solid #d9d9d9;">
+						<option > </option>
+						<option >Yes</option>
+							<option >No</option>
+					</select>
+					<span class="focus-input100"></span>
+				</div>
+				<div class="wrap-input100" style="border-bottom: 0px;">
+					<span class="label-input100">Do you have a major life event that has encouraged greater consumption of alcoholic beverages, smoking or drug use?</span>
+					<select  class="input100" name="h" style="padding: 10px 5px;margin-top: 15px;border: 2px solid #d9d9d9;">
+						<option > </option>
+						<option >Yes</option>
+							<option >No</option>
+							<option >Maybe</option>
+
+					</select>
+					<span class="focus-input100"></span>
+				</div>				<div class="wrap-input100" style="border-bottom: 0px;">
+					<span class="label-input100">Does your traumatic event fall in any of the categories below? </span>
+					<select  class="input100" name="n" style="padding: 10px 5px;margin-top: 15px;border: 2px solid #d9d9d9;">
+						<option > </option>
+						<option >Immigration and citizenship issues</option>
+							<option >Police violence or state violence</option>
+							<option >Race and inclusion</option>
+							<option >Tribalism</option>
+							<option >Xenophobia</option>
+							<option >Maybe</option>
+							<option >Sexual orientation discrimination</option>
+							<option >Domestic Violence</option>
+							<option >Parental Trauma</option>
+							<option >Disease and health</option>
+							<option >Assault and harassment</option>
+							<option >Miscarriage and child loss</option>
+							<option >Body image</option>
+							<option >Bullying</option>
+							<option >White privilege</option>
+							<option >Wars</option>
+							<option >Refugee and asylum status</option>
+							<option >Platonic relationship</option>
+							<option >Intimate relationship</option>
+							<option >Spirituality and faith</option>
+							<option >Societal expectation</option>
+					</select>
+					<span class="focus-input100"></span>
+				</div>
+				<div class="container-contact100-form-btn">
+					<div class="wrap-contact100-form-btn">
+						<div class="contact100-form-bgbtn"></div>
+						<button class="contact100-form-btn" id='submit' type="submit" value = "submit" style= "color:#000000">Predict</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</body>
+</html>
+
+
+
